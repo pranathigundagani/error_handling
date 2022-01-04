@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="f1d0ea65-596b-47f1-9727-c364fb00acfc" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<http:request-config name="HTTP_Request_configuration" doc:name="HTTP Request configuration" doc:id="c97444cf-358e-490a-aeda-94e63983c876" />
+	<flow name="error_handlingFlow1" doc:id="2ed33ece-843a-4136-8e9b-e0d4a15c81c3" initialState="stopped">
+		<http:listener doc:name="Listener" doc:id="e28049e9-8f73-423a-93c3-e3908d8faa23" config-ref="HTTP_Listener_config" path="/errorhandler"/>
+		<flow-ref doc:name="Flow Reference" doc:id="29fe978e-9788-4e2e-aff4-db7cf326157e" name="error_handlingFlow2"/>
+		<set-payload value='#["after flow reference"]' doc:name="Set Payload" doc:id="39399327-5afb-4786-9b07-66eb86bd1412" />
+	</flow>
+	<flow name="error_handlingFlow2" doc:id="15cd8457-ad53-41bf-bb9c-89c4d8f065e1" initialState="stopped">
+		<http:request method="DELETE" doc:name="Request" doc:id="719375cb-7df0-45fc-8f84-3dbb73eef7c1" config-ref="HTTP_Request_configuration" url="https://www.w3schools.com/sql/sql_delete.as"/>
+		<set-payload value='#["private flow"]' doc:name="Set Payload" doc:id="0b171216-0344-4f0c-86b1-3fad8b217d78" />
+		<error-handler >
+			<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="395d52ac-8ec9-4a97-8fac-ba0835b201df" >
+				<set-payload value='#["error handled"]' doc:name="Set Payload" doc:id="67fa8a37-a2c6-4644-bd98-21b259651c66" />
+			</on-error-continue>
+		</error-handler>
+	</flow>
+</mule>
